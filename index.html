@@ -1,1 +1,960 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="theme-color" content="#08090d">
+  <title>NEXORA — Platform Layanan Profesional</title>
+  <style>
+    :root {
+      --bg: #08090d;
+      --card: #151821;
+      --card-2: #10131a;
+      --line: #252b39;
+      --blue: #2563eb;
+      --blue-2: #3b82f6;
+      --muted: #9ca3af;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --white: #f3f4f6;
+      --radius: 16px;
+    }
 
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { background: var(--bg); }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--white);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    button, input, textarea { font: inherit; }
+    button { border: 0; color: inherit; cursor: pointer; }
+    button:disabled { cursor: not-allowed; opacity: .55; }
+    .app { width: 100%; max-width: 520px; min-height: 100vh; margin: 0 auto; position: relative; }
+    .page { display: none; min-height: 100vh; padding-bottom: 96px; animation: appear .22s ease; }
+    .page.active { display: block; }
+    @keyframes appear { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+
+    .muted { color: var(--muted); }
+    .center { text-align: center; }
+    .card {
+      background: linear-gradient(145deg, #151821, #12151d);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+    .btn {
+      min-height: 46px;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-weight: 700;
+      transition: transform .15s ease, filter .15s ease;
+    }
+    .btn:active { transform: scale(.98); }
+    .btn-primary {
+      background: linear-gradient(90deg, var(--blue), var(--blue-2));
+      box-shadow: 0 6px 18px rgba(37, 99, 235, .28);
+    }
+    .btn-secondary { background: #202532; border: 1px solid #30384a; }
+    .btn-danger { background: rgba(127, 29, 29, .35); border: 1px solid rgba(185, 28, 28, .55); color: #fecaca; }
+    .btn-success { background: rgba(5, 150, 105, .85); }
+    .btn-reject { background: rgba(185, 28, 28, .82); }
+    .input {
+      width: 100%;
+      background: var(--card-2);
+      border: 1px solid #303746;
+      border-radius: 12px;
+      color: var(--white);
+      padding: 13px 14px;
+      outline: none;
+    }
+    .input:focus { border-color: var(--blue-2); box-shadow: 0 0 0 3px rgba(59, 130, 246, .15); }
+    textarea.input { resize: vertical; min-height: 150px; }
+    .label { display: block; margin: 0 0 8px; color: var(--muted); font-size: 14px; }
+    .stack > * + * { margin-top: 16px; }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .gap { gap: 12px; }
+    .hidden { display: none !important; }
+    .small { font-size: 13px; }
+    .tiny { font-size: 11px; }
+    .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); background: none; padding: 0; }
+    .back-link:hover { color: var(--white); }
+
+    .hero { padding: 54px 20px 112px; text-align: center; }
+    .logo-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 104px;
+      height: 104px;
+      padding: 0;
+      overflow: hidden;
+      border-radius: 28px;
+      background: #000;
+      border: 1px solid #1f2937;
+      box-shadow: 0 12px 38px rgba(0, 0, 0, .52);
+      user-select: none;
+    }
+    .logo-button img { width: 100%; height: 100%; object-fit: cover; }
+    .logo-small { width: 72px; height: 72px; border-radius: 20px; }
+    .brand-title { margin: 18px 0 4px; font-size: clamp(32px, 10vw, 44px); letter-spacing: -.04em; }
+    .feature-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 30px 0 16px; text-align: left; }
+    .feature { padding: 17px; }
+    .feature-icon, .menu-icon {
+      width: 44px; height: 44px; display: grid; place-items: center;
+      border-radius: 50%; background: rgba(37, 99, 235, .18); color: #60a5fa;
+      font-size: 21px; margin-bottom: 12px;
+    }
+    .feature h3, .feature p { margin: 0; }
+    .feature h3 { font-size: 15px; }
+    .feature p { margin-top: 6px; font-size: 12px; line-height: 1.5; }
+    .rate-card { padding: 17px; margin-bottom: 18px; text-align: left; }
+    .rate-card .feature-icon { margin: 0; width: 40px; height: 40px; font-size: 18px; }
+
+    .form-page { padding: 40px 20px 112px; }
+    .form-head { text-align: center; margin-bottom: 30px; }
+    .form-head h2 { margin: 0 0 6px; font-size: 25px; }
+    .form-head p { margin: 0; }
+    .google-btn { width: 100%; background: transparent; border: 1px solid #394150; }
+    .divider { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; margin: 22px 0; }
+    .divider::before, .divider::after { content: ""; height: 1px; flex: 1; background: #252b39; }
+    .notice { padding: 12px 14px; border-radius: 12px; background: rgba(30, 64, 175, .19); border: 1px solid rgba(59, 130, 246, .35); color: #bfdbfe; line-height: 1.5; }
+
+    .topbar { padding: 22px 20px 15px; }
+    .avatar { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 50%; background: linear-gradient(135deg, #f97316, #f59e0b); color: #111827; font-weight: 900; font-size: 21px; }
+    .bell { width: 40px; height: 40px; border-radius: 50%; background: var(--card); position: relative; }
+    .bell::after { content: ""; position: absolute; width: 7px; height: 7px; top: 8px; right: 8px; border-radius: 50%; background: var(--blue-2); }
+    .content { padding: 0 20px; }
+    .balance { padding: 22px; margin: 0 0 14px; }
+    .balance h2 { margin: 4px 0 17px; font-size: 39px; letter-spacing: -.04em; }
+    .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 28px; }
+    .stat { padding: 15px; }
+    .stat p { margin: 0; }
+    .stat .amount { margin-top: 5px; font-size: 18px; font-weight: 800; color: #60a5fa; }
+    .menu-title { margin: 0 0 13px; font-size: 20px; }
+    .menu-list { display: grid; gap: 12px; }
+    .menu-card { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 14px; text-align: left; }
+    .menu-card:hover { border-color: rgba(59, 130, 246, .65); }
+    .menu-icon { flex: 0 0 auto; margin: 0; border-radius: 12px; }
+    .menu-card h4, .menu-card p { margin: 0; }
+    .menu-card h4 { font-size: 15px; }
+    .menu-card p { margin-top: 4px; font-size: 12px; }
+    .chevron { color: var(--muted); font-size: 20px; }
+
+    .subpage { padding: 26px 20px 112px; }
+    .subpage h2 { margin: 0 0 6px; font-size: 25px; }
+    .subpage > p { margin: 0 0 20px; }
+    .price-card { padding: 17px; margin-bottom: 24px; }
+    .price-card strong { color: #60a5fa; font-size: 18px; }
+    .price-card .rule { border-top: 1px solid #303746; margin-top: 13px; padding-top: 13px; }
+    .choices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin: 10px 0 24px; }
+    .choice { padding: 10px 6px; background: transparent; border: 1px solid #303746; border-radius: 10px; font-weight: 700; }
+    .choice.active, .choice:hover { border-color: var(--blue-2); background: rgba(59, 130, 246, .16); }
+    .section-label { display: block; margin-bottom: 10px; font-weight: 700; }
+    .rules { margin-top: 17px; padding: 15px; border-radius: 12px; border: 1px solid rgba(30, 64, 175, .55); background: rgba(23, 37, 84, .4); }
+    .rules h4 { margin: 0 0 10px; color: #93c5fd; }
+    .rules ul { margin: 0; padding-left: 19px; }
+    .rules li { margin: 6px 0; line-height: 1.4; font-size: 13px; }
+
+    .filters { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 10px; margin-bottom: 4px; }
+    .filter { white-space: nowrap; padding: 9px 14px; border-radius: 999px; background: var(--card); color: var(--muted); }
+    .filter.active { color: white; background: var(--blue-2); }
+    .history-list, .withdraw-list { display: grid; gap: 11px; }
+    .history-item, .withdraw-item { padding: 15px; }
+    .status { display: inline-flex; padding: 5px 9px; border-radius: 999px; font-size: 11px; font-weight: 800; }
+    .status.waiting { color: #fcd34d; background: rgba(245, 158, 11, .15); }
+    .status.done { color: #6ee7b7; background: rgba(16, 185, 129, .15); }
+    .status.rejected { color: #fca5a5; background: rgba(239, 68, 68, .15); }
+    .empty { padding: 42px 16px; text-align: center; color: var(--muted); }
+    .empty .empty-icon { font-size: 30px; margin-bottom: 8px; }
+    .empty p { margin: 3px 0; }
+
+    .profile-head { text-align: center; margin: 10px 0 28px; }
+    .profile-head .avatar { width: 92px; height: 92px; margin: 0 auto 14px; font-size: 35px; }
+    .profile-head h2 { margin: 0 0 5px; }
+    .profile-card { padding: 18px; display: grid; gap: 17px; margin-bottom: 20px; }
+    .profile-row { display: flex; align-items: center; gap: 12px; }
+    .profile-icon { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 10px; background: var(--bg); color: #60a5fa; }
+    .profile-row p { margin: 0; }
+    .profile-row .value { margin-top: 3px; overflow-wrap: anywhere; }
+    .profile-action { width: 100%; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; text-align: left; }
+
+    .admin-head { padding: 21px 20px 16px; border-bottom: 1px solid #252b39; margin-bottom: 20px; }
+    .admin-head h2 { margin: 0; font-size: 20px; }
+    .admin-content { padding: 0 20px; }
+    .admin-section { margin-bottom: 23px; }
+    .admin-section > h3 { margin: 0 0 12px; font-size: 16px; }
+    .queue-item { padding: 15px; }
+    .queue-toggle { width: 100%; display: flex; justify-content: space-between; gap: 12px; text-align: left; background: none; padding: 0; }
+    .detail-content { margin-top: 14px; padding-top: 14px; border-top: 1px solid #252b39; }
+    .email-list { max-height: 180px; overflow: auto; padding: 12px; border-radius: 9px; background: var(--bg); color: var(--muted); font-size: 12px; line-height: 1.7; white-space: pre-line; word-break: break-word; }
+    .admin-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 9px; margin-top: 11px; }
+    .email-review-list { display: grid; gap: 8px; margin-top: 12px; }
+    .email-review-row { padding: 10px; border-radius: 10px; background: var(--bg); border: 1px solid #252b39; }
+    .email-review-address { overflow-wrap: anywhere; color: #d1d5db; font-size: 12px; margin-bottom: 8px; }
+    .decision-buttons { display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px; }
+    .decision-btn { min-height: 34px; padding: 7px 8px; border-radius: 8px; background: #202532; border: 1px solid #303746; color: var(--muted); font-size: 12px; font-weight: 700; }
+    .decision-btn.approve.selected { color: #a7f3d0; background: rgba(5, 150, 105, .35); border-color: #10b981; }
+    .decision-btn.reject.selected { color: #fecaca; background: rgba(185, 28, 28, .35); border-color: #ef4444; }
+    .review-summary { margin-top: 12px; padding: 10px; border-radius: 9px; background: rgba(37, 99, 235, .12); color: #bfdbfe; font-size: 12px; text-align: center; }
+    .confirm-review { width: 100%; margin-top: 10px; }
+    .user-list { display: grid; gap: 8px; margin-top: 14px; }
+    .user-row { padding: 11px; border-radius: 10px; background: var(--bg); border: 1px solid #252b39; }
+    .user-row.banned { border-color: rgba(239, 68, 68, .45); }
+    .user-row-actions { display: flex; gap: 7px; margin-top: 9px; }
+    .user-row-actions .btn { flex: 1; min-height: 34px; padding: 7px 8px; font-size: 12px; }
+    .switch-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+    .switch { position: relative; width: 46px; height: 25px; flex: 0 0 auto; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; inset: 0; border-radius: 99px; background: #374151; transition: .2s; }
+    .slider::before { content: ""; position: absolute; width: 19px; height: 19px; left: 3px; top: 3px; border-radius: 50%; background: white; transition: .2s; }
+    .switch input:checked + .slider { background: var(--blue-2); }
+    .switch input:checked + .slider::before { transform: translateX(21px); }
+
+    .bottom-nav {
+      position: fixed; z-index: 30; left: 50%; bottom: 0; transform: translateX(-50%);
+      display: flex; width: min(520px, 100%); justify-content: space-around;
+      padding: 8px 3px calc(8px + env(safe-area-inset-bottom));
+      background: rgba(8, 9, 13, .94); border-top: 1px solid #252b39; backdrop-filter: blur(12px);
+    }
+    .nav-item { flex: 1; padding: 5px 1px; background: transparent; color: var(--muted); font-size: 10px; }
+    .nav-item .nav-icon { display: block; margin-bottom: 3px; font-size: 18px; }
+    .nav-item.active { color: #60a5fa; }
+
+    .modal { position: fixed; z-index: 80; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(0, 0, 0, .82); }
+    .modal-card { width: min(100%, 390px); padding: 22px; border-radius: 17px; background: var(--card); border: 1px solid #303746; }
+    .modal-card h3 { margin: 0 0 17px; text-align: center; }
+    .modal-close { float: right; background: none; color: var(--muted); font-size: 23px; line-height: 1; }
+    .toast {
+      position: fixed; z-index: 100; left: 50%; bottom: 84px; transform: translate(-50%, 15px);
+      width: min(calc(100% - 32px), 480px); padding: 12px 14px; border-radius: 11px;
+      background: #1f2937; border: 1px solid #374151; box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      opacity: 0; pointer-events: none; transition: .2s; font-size: 13px; line-height: 1.45;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    @media (min-width: 560px) {
+      body { padding: 18px 0; }
+      .app { min-height: calc(100vh - 36px); border: 1px solid #151923; border-radius: 22px; overflow: hidden; box-shadow: 0 18px 70px rgba(0,0,0,.35); }
+      .bottom-nav { bottom: 18px; border-radius: 0 0 22px 22px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div id="adminModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="adminTitle">
+      <div class="modal-card">
+        <button class="modal-close" type="button" onclick="hideAdminModal()" aria-label="Tutup">&times;</button>
+        <h3 id="adminTitle">🔐 Akses Admin</h3>
+        <input id="pinAdmin" class="input" type="password" inputmode="numeric" maxlength="6" placeholder="Masukkan PIN akses" autocomplete="off">
+        <button class="btn btn-primary" style="width:100%;margin-top:14px" type="button" onclick="bukaAdmin()">Masuk Panel</button>
+      </div>
+    </div>
+
+    <section id="pageHome" class="page active">
+      <div class="hero">
+        <button id="logoUtama" class="logo-button" type="button" title="Logo NEXORA">
+          <img alt="Logo NEXORA" src="data:image/webp;base64,UklGRuwIAABXRUJQVlA4WAoAAAAQAAAA/wAA/wAAQUxQSFYAAAABd6CgbSNHlwM0+RNb/zQiIn7/P+8blCJAUW3blAwaUMFQExFE0cFYCONfAAUIoMkdn4j+T0Dr4ksO4kc04q+8h//wH/7Df/gP/1EQ/HeT89Lt2V98BVZQOCBwCAAAcDcAnQEqAAEAAT5hMJRHpCMkoSURqLCQDAljbuFz8QgTX+A/Izw8KW9u/ID2n7E/W/wL+Q3TO4B/ovPG8X/M/9V/b/yi7bnmAfwb+G/7T+n/3z9ku5B5gP2b/Zv3t/Q5/kvUA/qH+2///YAegB5Yn7h/BV/YP9n+1HwI/s////YA///qAcMy+1FqmWZlBy/OROeR7/JxbIMUkGKSDFJBikgxSQYpIMUkGKSDFJBikf4BHRzJWOLGxAxBwu/EBMMkGGZtvx2VdJWttFjixrd2wd4o1iygGQUTa55cnrvPTtAkPnNX6KZUgtM+zhwO5V+9D0ouFXjb1WTFjYgWKE+PYNDREngFJohfRoTT4aEjceVlvVkc9LARY4jitOQLtk6Pn/4jlmBk9Jv+LalFPg5qJRnRN15DFvGMbRgR/lre0bvyamMmDgsBdmQNrVhGwoGimVQu447QHzTECxtcQ7THiElwr7VjRhn1QZBGW6M5fvoP2x7wlh34+6VPo6Vnp2ilgMmffTqv06yr+NZj9U5TOMx9MdEKW5sNAqh4sa3u79gu4mQ3WKrJlk7jDFFjixsQMUkGKSDFJBikgxSQYpIMUkGKEAAA/v+pRgAAABJ+Fnj1YIuFkWZ0LvVzauKuk/fEXdyAFVaPWHkHYQmdz+8D6PdgDGdRLS4UKBOxKvbEuFreacxPqDkBmSIChc1dCfhLf2OhKJCf551ATe9XMYdhVzPnYHbltzm+ccS2cwInZpCrtyQk/dkdyjEWWdPUjikuiY1jOSdHdbxDsuFbNSNlUyBJp6TeSgtQXiWc3BxJtUiKfG7t2Gu4bYatRAErN6lLwCvhS6VCvZStIBQVziB5+Hmaa5yNmz3BenV8AvflBC5gQu4q0iGfJZNrvNHcRzDOccqY6kqGVg+clqKz9SDxz0y+bUj21s1cyqLjWHixwRuWgrpthaquqyIdUytaff9moljAp/8okSLaUyQm5Kz6im3MF2/gTdV3xzr5WNbqT5GcsSYxWSjCY2FclQcQFVdk4YIw1vC207kem61TB+vlA1/wijXLt+sLdHuVgtq0jfe88EL0/uYs4DIeQQyovJfBydMkwEz9QghlZbg8bZOZepW9PtnlZx8mHFaIuPvfPAS3a0hDL64ny56H7nppy30cMlGXolsw6EMrwn8eU6PfN/0JFqGRzYUoQYgY1J72MzVR0CoIfUblq1LbYxPZ/i8KTbo3FCas0oQBZsb68+3JY8Os4MBkPpHJ9AX68xiY2SL/pI4vuw2oOHv9ZbwjVDTv5rU2vSg6lM9UKHswx6305swPUjPouayDUc6gIbjraYCYUAGXz1cNG0sc6lyMV2DGniPyslxWEI7zcDCWSIX2KVLwEig84FKFg4Ht8AH5xRwhhK+MCe7vuUCnhB8IPLC1fYB6GJwqCNAU4izvi/2Q5dRNzHzmX4ZZbMNKc1+2HRxoe0sRS6ICpfeu0+AFWX/ovb4N8nhLfS0Fd+KsEDvSwio7L7X+‑pB/kWiRAv877PIPv9W814HndfbNN/nRAuLcp3qqg6TwvChTAFZ2217et5+Nm3qXHQnMJKX5P4skrWmTtowAJlZwdNRAqm+ET8LwYFNILX5hXZYj4H2PsApxcqMacomWwlInhuXIwNHZM4zIKQ2pchHCu/iJLC9Y6h47aHVz1UFyEKH/z3xlY/orMLerjJ9k0qBvDa+f+21pzhX0Zlm0l4x/HpOiDrv4e1ohdO9mEqEoNZzzqUBVbtUYc5vr5c8JOgifIV+kGT/pYZqDGU9Hb05Qp5I95zbKc6QuSEQ5ba213IsRYtnObP5Y1wcpKfCIl4NsntW8mbYOHuO32LDG7QSheps3RN6Lzk607eObO7YcG7V1K8Z9+/rJhkWMX7hyUy6yumpMzu8WpTflDJN2RV+MP0idUo/Nw29HMi75cP6dTm/JnXCVI67+blY6jsxVbjJuvO4cf6TODYz8u7KZDZVd1G+PhiFwjPhQCoPKBa7uZKWbCvRQoXwVZmZgriRAYIuiT5yTmElgEFObvdQH4KzJqwvf5JBZFH8EqjMalvjnSHQa22aITE20FgrO8fV8w3B3PpKfOeDnPN8w5kMj4nzR6OSRljBy5x8Pt+Jt7k3xld4TiDM7Q/SCF4EBgj/xM1VCy4m6/Pfu8CftLaVHyHAgBBbQCF6R03Z7FsLVN447osS+8DNZC7kSjnWAaInWR4cJgeqhZsw/+glIYC/Y6hIHfBbupzJHshP/Kak+K6NBB7eOGmm7Lm12odGA5iXR7JXpIjUjhQSsWGg+DaGaKSvd5Nxqi8MoQjiD7VeEKnMCRfyt/sgwgv8BWkJ33EPSNBw/6XK0SqiiyZaK6QE8YSaYLiMEf1Zn5VtQrYSf+QQrTlZ0+g+QbPqsvPOcaxqFzrqCMa1mpoE2cmT4ssjxChTg4Jnvp+QRmc27Az6Xb/VhTfSCWvuyMQ3aPNeHpfJwArpO4AdoAsSy4va5V0QXJaCpznaHcgPx10ATi+D6xjthADk3V6sTVnEKaIl/4SWWClgCS8kNj1XQ6SGaMknoCRNMBinWt+1t5ZQTA5eEHL5PRNoAvYEpivU1/zgWCdZSpxhTcIakfCnl6EP2YjkKi/ORHd+LSAAHVllZnY5c9zPTlRqpBYf65VubhoLSvOoXWYFz9oZE3SrH93LhARIGbSLdSg/SmqILWS28R0b4nCfNyt2MchqdCFQUEPnTdIB+7HkiamJw7S6gRsxcI58bMlK5ccrz3QGgfHru6wcoym3iWlhqWr/AREFKWf/64sN1D+KGb/e1HT4tVj3zYSG4qZGt38NLjszoH59we1KfUCPGYAMKbsvyVPB9kOShFmcpt/NWpSOx/4/O+RJutWGfKoYYvfJNAAAAAAAAA" />
+        </button>
+        <h1 class="brand-title">NEXORA</h1>
+        <p class="muted">platform layanan profesional</p>
+
+        <div class="feature-grid">
+          <article class="card feature">
+            <div class="feature-icon">⚡</div>
+            <h3>Proses Rapi</h3>
+            <p class="muted">Tinjauan status yang jelas dan mudah dipantau.</p>
+          </article>
+          <article class="card feature">
+            <div class="feature-icon">💳</div>
+            <h3>Saldo Transparan</h3>
+            <p class="muted">Perolehan dan penarikan tercatat di akun.</p>
+          </article>
+        </div>
+
+        <div class="card rate-card">
+          <div class="row">
+            <div class="row gap">
+              <div class="feature-icon">✉</div>
+              <div>
+                <div class="muted small">Nilai saat ini</div>
+                <strong>Rp <span id="rateDisplay">500</span>/email</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-primary" style="width:100%" type="button" onclick="showPage('pageLogin')">Mulai Sekarang →</button>
+      </div>
+    </section>
+
+    <section id="pageLogin" class="page">
+      <div class="form-page">
+        <div class="form-head">
+          <img class="logo-button logo-small" alt="Logo NEXORA" src="data:image/webp;base64,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" />
+          <h2>Masuk ke NEXORA</h2>
+          <p class="muted">Lanjutkan ke ruang kerja Anda</p>
+        </div>
+        <button class="btn google-btn" type="button" onclick="showToast('Login Google belum dihubungkan. Gunakan email demo untuk mencoba tampilan.')">G &nbsp; Lanjut dengan Google</button>
+        <div class="divider">atau</div>
+        <div class="stack">
+          <div>
+            <label class="label" for="inputEmail">Alamat Email</label>
+            <input id="inputEmail" class="input" type="email" placeholder="nama@email.com" autocomplete="email">
+          </div>
+          <button class="btn btn-primary" style="width:100%" type="button" onclick="loginUser()">Lanjut →</button>
+          <p class="center muted small">Demo ini tidak meminta password, OTP, atau akses ke akun email.</p>
+          <button class="back-link" style="margin:4px auto 0" type="button" onclick="showPage('pageHome')">← Kembali ke halaman utama</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="pageBeranda" class="page">
+      <header class="topbar row">
+        <div class="row gap">
+          <div id="userAvatar" class="avatar">N</div>
+          <div>
+            <div class="muted tiny">SELAMAT DATANG</div>
+            <strong id="userName">Pengguna</strong>
+          </div>
+        </div>
+        <button class="bell" type="button" onclick="showToast('Belum ada notifikasi baru.')">♟</button>
+      </header>
+      <main class="content">
+        <div class="card balance">
+          <div class="muted">Saldo tersedia</div>
+          <h2>Rp <span id="saldoUtama">0</span></h2>
+          <button class="btn btn-primary" style="width:100%" type="button" onclick="showPage('pageTarik')">💳 &nbsp; Tarik Saldo</button>
+        </div>
+        <div class="stats">
+          <div class="card stat"><p class="muted small">Total diperoleh</p><p class="amount">Rp <span id="totalDapat">0</span></p></div>
+          <div class="card stat"><p class="muted small">Sudah ditarik</p><p class="amount" style="color:var(--white)">Rp <span id="totalTarik">0</span></p></div>
+        </div>
+        <h3 class="menu-title">Menu Utama</h3>
+        <div class="menu-list">
+          <button class="card menu-card" type="button" onclick="showPage('pageKirim')">
+            <span class="row gap"><span class="menu-icon">✈</span><span><h4>Kirim / Setor Email</h4><p class="muted">Ajukan email untuk ditinjau</p></span></span><span class="chevron">›</span>
+          </button>
+          <button class="card menu-card" type="button" onclick="showPage('pageRiwayat')">
+            <span class="row gap"><span class="menu-icon" style="background:rgba(245,158,11,.15);color:#fbbf24">↺</span><span><h4>Riwayat Setoran</h4><p class="muted">Lihat hasil persetujuan</p></span></span><span class="chevron">›</span>
+          </button>
+          <button class="card menu-card" type="button" onclick="showPage('pageInfo')">
+            <span class="row gap"><span class="menu-icon" style="background:rgba(59,130,246,.15);color:#60a5fa">ⓘ</span><span><h4>Profil & Bantuan</h4><p class="muted">Info akun dan aturan</p></span></span><span class="chevron">›</span>
+          </button>
+        </div>
+      </main>
+    </section>
+
+    <section id="pageKirim" class="page">
+      <main class="subpage">
+        <button class="back-link" type="button" onclick="showPage('pageBeranda')">← Beranda</button>
+        <h2 style="margin-top:18px">Kirim Email Gmail</h2>
+        <p class="muted">Pilih jumlah email terlebih dahulu, lalu isi satu alamat per baris.</p>
+        <div class="card price-card">
+          <div class="row"><span class="muted">Nilai tukar saat ini</span><strong>Rp <span id="hargaPerAkun">500</span>/email</strong></div>
+          <div class="rule muted small">Minimal: 5 • Maksimal: 50 email</div>
+        </div>
+        <label class="section-label">1. Tentukan jumlah email:</label>
+        <div class="choices">
+          <button class="choice active" data-jml="5" type="button" onclick="pilihJumlah(this)">5</button>
+          <button class="choice" data-jml="10" type="button" onclick="pilihJumlah(this)">10</button>
+          <button class="choice" data-jml="20" type="button" onclick="pilihJumlah(this)">20</button>
+          <button class="choice" data-jml="30" type="button" onclick="pilihJumlah(this)">30</button>
+          <button class="choice" data-jml="40" type="button" onclick="pilihJumlah(this)">40</button>
+          <button class="choice" data-jml="50" type="button" onclick="pilihJumlah(this)">50</button>
+        </div>
+        <input id="jmlDipilih" type="hidden" value="5">
+        <label class="section-label" for="daftarEmailInput">2. Masukkan daftar alamat email:</label>
+        <textarea id="daftarEmailInput" class="input" placeholder="Satu alamat setiap baris&#10;contoh@email.com&#10;lainnya@email.com"></textarea>
+        <p class="muted small">ⓘ Pastikan email yang dikirim sesuai rules yang berlaku.</p>
+        <button class="btn btn-primary" style="width:100%;margin-top:14px" type="button" onclick="kirimSetoranVerifikasi()">✅ Kirim & Ajukan Peninjauan</button>
+        <div class="rules">
+          <h4>📋 Ketentuan Layanan</h4>
+          <ul id="teksRules"></ul>
+        </div>
+      </main>
+    </section>
+
+    <section id="pageRiwayat" class="page">
+      <main class="subpage">
+        <button class="back-link" type="button" onclick="showPage('pageBeranda')">← Beranda</button>
+        <h2 style="margin-top:18px">Riwayat Transaksi</h2>
+        <p class="muted">Ringkasan jumlah email yang disetujui atau ditolak.</p>
+        <div class="filters">
+          <button class="filter active" data-filter="all" type="button" onclick="setHistoryFilter(this)">Semua</button>
+          <button class="filter" data-filter="waiting" type="button" onclick="setHistoryFilter(this)">Menunggu</button>
+          <button class="filter" data-filter="done" type="button" onclick="setHistoryFilter(this)">Selesai</button>
+        </div>
+        <div id="riwayatKonten" class="history-list"></div>
+        <div id="kosongRiwayat" class="empty hidden"><div class="empty-icon">📂</div><p>Belum ada catatan</p><p class="small">Mulai kirim email dari menu sebelumnya.</p></div>
+      </main>
+    </section>
+
+    <section id="pageTarik" class="page">
+      <main class="subpage">
+        <button class="back-link" type="button" onclick="showPage('pageBeranda')">← Beranda</button>
+        <h2 style="margin-top:18px">Tarik Saldo</h2>
+        <p class="muted">Metode pembayaran hanya melalui DANA.</p>
+        <div class="card" style="padding:20px;margin-bottom:18px">
+          <div class="muted">Saldo saat ini</div>
+          <h2 style="font-size:35px;margin:5px 0 20px">Rp <span id="saldoTarik">0</span></h2>
+          <label class="label" for="jumlahTarik">Jumlah penarikan</label>
+          <input id="jumlahTarik" class="input" type="number" min="1000" step="1" inputmode="numeric" placeholder="Minimal Rp 1.000">
+          <label class="label" for="noTujuan">Nomor DANA</label>
+          <input id="noTujuan" class="input" type="tel" inputmode="numeric" placeholder="08xxxxxxxxxx">
+          <button id="tombolTarik" class="btn btn-primary" style="width:100%;margin-top:14px" type="button" onclick="ajukanPenarikan()" disabled>Ajukan Penarikan</button>
+        </div>
+        <div class="notice">ⓘ Metode pembayaran hanya melalui DANA. Minimal penarikan Rp 1.000, biaya fee Rp70. Proses akan dilakukan 1×24 jam oleh admin.</div>
+        <h3 style="font-size:16px;margin:24px 0 11px">Daftar Permintaan</h3>
+        <div id="listWithdraw" class="withdraw-list"></div>
+      </main>
+    </section>
+
+    <section id="pageInfo" class="page">
+      <main class="subpage">
+        <div class="profile-head">
+          <div id="infoAvatar" class="avatar">N</div>
+          <h2 id="infoNamaPengguna">Pengguna</h2>
+          <p class="small" style="color:#60a5fa">✓ Akun terdaftar & terverifikasi</p>
+        </div>
+        <div class="card profile-card">
+          <div class="profile-row"><span class="profile-icon">✉</span><div><div class="tiny muted">Email terdaftar</div><p id="infoEmail" class="value">-</p></div></div>
+          <div class="profile-row"><span class="profile-icon">▣</span><div><div class="tiny muted">Bergabung sejak</div><p id="infoTanggal" class="value">September 2026</p></div></div>
+        </div>
+        <button class="btn btn-danger profile-action" type="button" onclick="keluarDariSistem()">⇥ &nbsp; Keluar / Tutup Sesi</button>
+        <p class="center muted small" style="margin-top:34px">NEXORA • Platform layanan profesional</p>
+      </main>
+    </section>
+
+    <section id="pageAdmin" class="page">
+      <header class="admin-head row">
+        <h2>⚙️ &nbsp;Panel Kendali Admin</h2>
+        <button class="back-link" type="button" onclick="kembaliKeProfil()">Tutup ×</button>
+      </header>
+      <main class="admin-content">
+        <section class="admin-section">
+          <h3 class="row"><span>📥 Antrean Setoran</span><span class="tiny muted">Klik untuk rincian</span></h3>
+          <div id="daftarAntrean" class="stack"></div>
+          <div id="antreanKosong" class="empty hidden">Tidak ada kiriman baru</div>
+        </section>
+        <section class="admin-section card" style="padding:17px">
+          <button class="row" style="width:100%;background:none;padding:0;text-align:left" type="button" onclick="toggleRegisteredUsers()">
+            <span><strong>👥 Pengguna Terdaftar</strong><br><span class="muted small"><span id="jumlahUserTerdaftar">0</span> user • <span id="jumlahUserBanned">0</span> banned</span></span>
+            <span id="userListChevron" class="chevron">›</span>
+          </button>
+          <div id="daftarPenggunaAdmin" class="user-list hidden"></div>
+        </section>
+        <section class="admin-section card" style="padding:17px">
+          <h3>💳 Permintaan Penarikan</h3>
+          <div id="permintaanTarik" class="withdraw-list"></div>
+        </section>
+        <section class="admin-section card" style="padding:17px">
+          <h3>⚙️ Pengaturan Layanan</h3>
+          <div class="switch-row"><span>Buka penerimaan setoran</span><label class="switch"><input id="switchStatusLayanan" type="checkbox" checked><span class="slider"></span></label></div>
+          <label class="label" for="inputRateAdmin">Nilai tukar per email (Rp)</label>
+          <input id="inputRateAdmin" class="input" type="number" min="1" step="1" value="500">
+          <label class="label" for="inputRulesAdmin" style="margin-top:15px">Peraturan layanan</label>
+          <textarea id="inputRulesAdmin" class="input" style="min-height:125px" placeholder="Satu aturan per baris"></textarea>
+          <button class="btn btn-primary" style="width:100%;margin-top:15px" type="button" onclick="simpanPengaturanAdmin()">💾 Terapkan Pengaturan</button>
+        </section>
+        <div class="notice small">Catatan keamanan: PIN di versi HTML tunggal ini bukan autentikasi server. Siapa pun yang dapat melihat source code dapat membacanya. Gunakan backend dan autentikasi sungguhan sebelum dipakai untuk data atau pembayaran nyata.</div>
+      </main>
+    </section>
+
+    <nav id="bottomNav" class="bottom-nav hidden" aria-label="Navigasi utama">
+      <button class="nav-item" data-page="pageBeranda" type="button" onclick="showPage('pageBeranda')"><span class="nav-icon">⌂</span>Beranda</button>
+      <button class="nav-item" data-page="pageKirim" type="button" onclick="showPage('pageKirim')"><span class="nav-icon">✈</span>Kirim</button>
+      <button class="nav-item" data-page="pageRiwayat" type="button" onclick="showPage('pageRiwayat')"><span class="nav-icon">↺</span>Riwayat</button>
+      <button class="nav-item" data-page="pageTarik" type="button" onclick="showPage('pageTarik')"><span class="nav-icon">▣</span>Dana</button>
+      <button class="nav-item" data-page="pageInfo" type="button" onclick="showPage('pageInfo')"><span class="nav-icon">●</span>Akun</button>
+    </nav>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    /* NEXORA versi satu-file: data demo tersimpan di browser dengan localStorage. */
+    const PIN_ADMIN = "085213"; // PIN demo; ini bukan keamanan server.
+    const MIN_WITHDRAWAL = 1000;
+    const WITHDRAW_FEE = 70;
+    const STORAGE_KEY = "nexora_demo_state_v2";
+    const DEFAULT_RULES = [
+      "Pastikan email yang dikirim memang boleh Anda kelola.",
+      "Jangan kirim password, OTP, recovery code, atau data rahasia.",
+      "Tinjauan admin dilakukan secara manual.",
+      "Saldo bertambah hanya setelah pengajuan disetujui."
+    ];
+    let state = loadState();
+    let activeHistoryFilter = "all";
+    let logoClicks = 0;
+    let lastLogoClick = 0;
+    let toastTimer;
+
+    function defaultState() {
+      return {
+        terhubung: false, namaPengguna: "", email: "", saldo: 0,
+        totalDihasilkan: 0, totalDitarik: 0, hargaPerAkun: 500,
+        layananBuka: true, jumlahDipilih: 5, daftarSetoran: [],
+        daftarPenarikan: [], registeredEmails: [], bannedEmails: [], rules: [...DEFAULT_RULES]
+      };
+    }
+
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+        return { ...defaultState(), ...(saved || {}), terhubung: false, namaPengguna: "", email: "" };
+      } catch (_) { return defaultState(); }
+    }
+
+    function saveState() {
+      const persistent = { ...state, terhubung: false, namaPengguna: "", email: "" };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(persistent));
+    }
+
+    function rupiah(value) {
+      return Number(value || 0).toLocaleString("id-ID");
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+      }[char]));
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 3200);
+    }
+
+    function showPage(id) {
+      if (!["pageHome", "pageLogin"].includes(id) && !state.terhubung && id !== "pageAdmin") {
+        id = "pageLogin";
+      }
+      document.querySelectorAll(".page").forEach(page => page.classList.toggle("active", page.id === id));
+      const nav = document.getElementById("bottomNav");
+      nav.classList.toggle("hidden", !state.terhubung || ["pageHome", "pageLogin", "pageAdmin"].includes(id));
+      document.querySelectorAll(".nav-item").forEach(item => item.classList.toggle("active", item.dataset.page === id));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (id === "pageRiwayat") renderHistory();
+      if (id === "pageTarik") renderWithdrawals();
+      if (id === "pageAdmin") { renderAdminQueue(); renderAdminWithdrawals(); renderAdminUsers(); muatPengaturanKeFormulir(); }
+    }
+
+    function showAdminModal() {
+      document.getElementById("adminModal").classList.remove("hidden");
+      setTimeout(() => document.getElementById("pinAdmin").focus(), 50);
+    }
+    function hideAdminModal() {
+      document.getElementById("adminModal").classList.add("hidden");
+      document.getElementById("pinAdmin").value = "";
+    }
+    function bukaAdmin() {
+      if (document.getElementById("pinAdmin").value.trim() !== PIN_ADMIN) {
+        showToast("PIN admin salah.");
+        return;
+      }
+      hideAdminModal();
+      showPage("pageAdmin");
+    }
+
+    function updateRulesList() {
+      const list = document.getElementById("teksRules");
+      list.replaceChildren();
+      (state.rules?.length ? state.rules : DEFAULT_RULES).forEach(rule => {
+        const li = document.createElement("li");
+        li.textContent = rule;
+        list.appendChild(li);
+      });
+    }
+
+    function updateRate() {
+      document.getElementById("rateDisplay").textContent = rupiah(state.hargaPerAkun);
+      document.getElementById("hargaPerAkun").textContent = rupiah(state.hargaPerAkun);
+    }
+
+    function updateBalances() {
+      document.getElementById("saldoUtama").textContent = rupiah(state.saldo);
+      document.getElementById("saldoTarik").textContent = rupiah(state.saldo);
+      document.getElementById("totalDapat").textContent = rupiah(state.totalDihasilkan);
+      document.getElementById("totalTarik").textContent = rupiah(state.totalDitarik);
+      const withdrawButton = document.getElementById("tombolTarik");
+      const phone = document.getElementById("noTujuan").value.trim();
+      const amount = Number(document.getElementById("jumlahTarik").value);
+      withdrawButton.disabled = !Number.isFinite(amount) || amount < MIN_WITHDRAWAL ||
+        amount > state.saldo || !/^08\d{8,13}$/.test(phone);
+    }
+
+    function setUserLabels() {
+      const name = state.namaPengguna || "Pengguna";
+      const initial = name.charAt(0).toUpperCase() || "N";
+      ["userAvatar", "infoAvatar"].forEach(id => document.getElementById(id).textContent = initial);
+      document.getElementById("userName").textContent = name;
+      document.getElementById("infoNamaPengguna").textContent = name;
+      document.getElementById("infoEmail").textContent = state.email || "-";
+    }
+
+    function pilihJumlah(button) {
+      document.querySelectorAll(".choice").forEach(item => item.classList.remove("active"));
+      button.classList.add("active");
+      state.jumlahDipilih = Number(button.dataset.jml);
+      document.getElementById("jmlDipilih").value = state.jumlahDipilih;
+    }
+
+    function kirimSetoranVerifikasi() {
+      if (Array.isArray(state.bannedEmails) && state.bannedEmails.includes(state.email)) {
+        showToast("Akun ini dibanned dan tidak dapat mengirim email.");
+        return;
+      }
+      if (!state.layananBuka) { showToast("Penerimaan setoran sedang ditutup oleh admin."); return; }
+      const raw = document.getElementById("daftarEmailInput").value.trim();
+      const rows = raw.split(/\r?\n/).map(item => item.trim()).filter(Boolean);
+      const expected = Number(state.jumlahDipilih);
+      const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (rows.length !== expected) {
+        showToast("Jumlah tidak sesuai: pilih " + expected + " baris, terdeteksi " + rows.length + ".");
+        return;
+      }
+      if (rows.some(email => !validEmail.test(email))) {
+        showToast("Ada alamat email yang formatnya belum benar.");
+        return;
+      }
+      if (new Set(rows.map(email => email.toLowerCase())).size !== rows.length) {
+        showToast("Alamat email tidak boleh duplikat.");
+        return;
+      }
+      const item = {
+        id: Date.now(), nama: state.namaPengguna, email: state.email,
+        jumlah: rows.length, daftar: rows, status: "menunggu", disetujui: 0, ditolak: 0,
+        dibuat: new Date().toLocaleString("id-ID")
+      };
+      state.daftarSetoran.unshift(item);
+      saveState();
+      document.getElementById("daftarEmailInput").value = "";
+      renderAdminQueue();
+      showToast("Setoran dikirim dan menunggu peninjauan admin.");
+      showPage("pageRiwayat");
+    }
+
+    function setHistoryFilter(button) {
+      activeHistoryFilter = button.dataset.filter;
+      document.querySelectorAll(".filter").forEach(item => item.classList.toggle("active", item === button));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const list = document.getElementById("riwayatKonten");
+      const empty = document.getElementById("kosongRiwayat");
+      const ownItems = state.daftarSetoran.filter(item => item.email === state.email);
+      const items = ownItems.filter(item => activeHistoryFilter === "all" || (activeHistoryFilter === "waiting" ? item.status === "menunggu" : item.status === "selesai"));
+      list.replaceChildren();
+      empty.classList.toggle("hidden", items.length > 0);
+      items.forEach(item => {
+        const card = document.createElement("article");
+        card.className = "card history-item";
+        const statusClass = item.status === "menunggu" ? "waiting" : (item.disetujui > 0 ? "done" : "rejected");
+        const statusText = item.status === "menunggu" ? "Menunggu" : "Selesai";
+        const result = item.status === "menunggu" ? "Hasil: —" : `✅ Disetujui: ${item.disetujui} &nbsp;|&nbsp; ❌ Ditolak: ${item.ditolak}`;
+        card.innerHTML = `<div class="row"><strong>Setoran #${String(item.id).slice(-5)}</strong><span class="status ${statusClass}">${statusText}</span></div><div class="row muted small" style="margin-top:9px"><span>Dikirim: <b>${item.jumlah} email</b></span><span>${result}</span></div>`;
+        list.appendChild(card);
+      });
+    }
+
+    function renderAdminQueue() {
+      const box = document.getElementById("daftarAntrean");
+      const empty = document.getElementById("antreanKosong");
+      const items = state.daftarSetoran.filter(item => item.status === "menunggu");
+      box.replaceChildren();
+      empty.classList.toggle("hidden", items.length > 0);
+      items.forEach(item => {
+        const card = document.createElement("article");
+        card.className = "card queue-item";
+        card.id = "queue-" + item.id;
+        const decisions = Array.isArray(item.keputusan) ? item.keputusan : [];
+        const approved = decisions.filter(decision => decision === "setuju").length;
+        const rejected = decisions.filter(decision => decision === "tolak").length;
+        const complete = decisions.length === item.daftar.length && decisions.every(Boolean);
+        const reviewRows = item.daftar.map((email, index) => {
+          const decision = decisions[index] || "";
+          return `<div class="email-review-row">
+            <div class="email-review-address">${index + 1}. ${escapeHtml(email)}</div>
+            <div class="decision-buttons">
+              <button class="decision-btn approve ${decision === "setuju" ? "selected" : ""}" type="button" onclick="pilihKeputusan(${item.id}, ${index}, 'setuju')">✓ Setujui</button>
+              <button class="decision-btn reject ${decision === "tolak" ? "selected" : ""}" type="button" onclick="pilihKeputusan(${item.id}, ${index}, 'tolak')">✕ Tolak</button>
+            </div>
+          </div>`;
+        }).join("");
+        card.innerHTML = `<button class="queue-toggle" type="button" onclick="toggleDetail(this)"><span><strong>${escapeHtml(item.nama || "Pengguna")}</strong><br><span class="muted small">${escapeHtml(item.email)}</span></span><span style="color:#60a5fa">${item.jumlah} email ▾</span></button>
+          <div class="detail-content hidden">
+            <div class="muted tiny">Tentukan keputusan untuk setiap alamat:</div>
+            <div class="email-review-list">${reviewRows}</div>
+            <div class="review-summary">Dipilih: ${approved} disetujui • ${rejected} ditolak${complete ? "" : " • Lengkapi semua keputusan dulu"}</div>
+            <button class="btn btn-primary confirm-review" type="button" onclick="konfirmasiSetoran(${item.id})" ${complete ? "" : "disabled"}>✅ Konfirmasi ACC</button>
+          </div>`;
+        box.appendChild(card);
+      });
+    }
+
+    function toggleDetail(button) {
+      button.nextElementSibling.classList.toggle("hidden");
+    }
+
+    function pilihKeputusan(id, index, decision) {
+      const item = state.daftarSetoran.find(entry => entry.id === id);
+      if (!item || item.status !== "menunggu") return;
+      if (!Array.isArray(item.keputusan)) item.keputusan = Array(item.daftar.length).fill("");
+      item.keputusan[index] = decision;
+      saveState();
+      renderAdminQueue();
+      const detail = document.querySelector("#queue-" + id + " .detail-content");
+      if (detail) detail.classList.remove("hidden");
+    }
+
+    function konfirmasiSetoran(id) {
+      const item = state.daftarSetoran.find(entry => entry.id === id);
+      if (!item || item.status !== "menunggu") return;
+      const decisions = Array.isArray(item.keputusan) ? item.keputusan : [];
+      if (decisions.length !== item.daftar.length || decisions.some(decision => !decision)) {
+        showToast("Tentukan setuju atau tolak untuk setiap alamat terlebih dahulu.");
+        return;
+      }
+      const approved = decisions.filter(decision => decision === "setuju").length;
+      const rejected = decisions.filter(decision => decision === "tolak").length;
+      item.status = "selesai";
+      item.disetujui = approved;
+      item.ditolak = rejected;
+      delete item.keputusan;
+      const addition = approved * Number(state.hargaPerAkun);
+      state.saldo += addition;
+      state.totalDihasilkan += addition;
+      saveState();
+      updateBalances();
+      renderAdminQueue();
+      renderHistory();
+      showToast("Setoran selesai diproses. Disetujui: " + approved + ", ditolak: " + rejected + ".");
+    }
+
+    function renderAdminUsers() {
+      const users = Array.isArray(state.registeredEmails) ? [...new Set(state.registeredEmails)] : [];
+      const banned = Array.isArray(state.bannedEmails) ? state.bannedEmails : [];
+      const list = document.getElementById("daftarPenggunaAdmin");
+      document.getElementById("jumlahUserTerdaftar").textContent = users.length;
+      document.getElementById("jumlahUserBanned").textContent = users.filter(email => banned.includes(email)).length;
+      list.replaceChildren();
+      if (!users.length) {
+        list.innerHTML = '<div class="muted small">Belum ada pengguna terdaftar.</div>';
+        return;
+      }
+      users.sort((a, b) => a.localeCompare(b)).forEach(email => {
+        const isBanned = banned.includes(email);
+        const username = email.split("@")[0];
+        const row = document.createElement("div");
+        row.className = "user-row" + (isBanned ? " banned" : "");
+        row.innerHTML = `<div class="row"><span><strong>${escapeHtml(username)}</strong><br><span class="muted small">${escapeHtml(email)}</span></span><span class="status ${isBanned ? "rejected" : "done"}">${isBanned ? "Banned" : "Aktif"}</span></div><div class="user-row-actions"><button class="btn ${isBanned ? "btn-success" : "btn-reject"}" type="button" onclick="ubahStatusBan('${encodeURIComponent(email)}', ${!isBanned})">${isBanned ? "↩ Batalkan banned" : "⛔ Banned permanen"}</button></div>`;
+        list.appendChild(row);
+      });
+    }
+
+    function toggleRegisteredUsers() {
+      const list = document.getElementById("daftarPenggunaAdmin");
+      const isHidden = list.classList.toggle("hidden");
+      document.getElementById("userListChevron").textContent = isHidden ? "›" : "⌄";
+      if (!isHidden) renderAdminUsers();
+    }
+
+    function ubahStatusBan(encodedEmail, shouldBan) {
+      const email = decodeURIComponent(encodedEmail);
+      state.bannedEmails = Array.isArray(state.bannedEmails) ? state.bannedEmails : [];
+      if (shouldBan && !state.bannedEmails.includes(email)) {
+        state.bannedEmails.push(email);
+        showToast("User dibanned dan tidak bisa mengirim email lagi.");
+      } else if (!shouldBan) {
+        state.bannedEmails = state.bannedEmails.filter(item => item !== email);
+        showToast("Banned user dibatalkan.");
+      }
+      saveState();
+      renderAdminUsers();
+    }
+
+    function ajukanPenarikan() {
+      const phone = document.getElementById("noTujuan").value.trim();
+      if (!/^08\d{8,13}$/.test(phone)) { showToast("Nomor tujuan harus diawali 08 dan berisi 10–15 angka."); return; }
+      const amount = Number(document.getElementById("jumlahTarik").value);
+      if (!Number.isFinite(amount) || amount < MIN_WITHDRAWAL) { showToast("Minimal penarikan adalah Rp 1.000."); return; }
+      if (amount > state.saldo) { showToast("Jumlah penarikan melebihi saldo yang tersedia."); return; }
+      state.saldo -= amount;
+      state.daftarPenarikan.unshift({
+        id: Date.now(),
+        email: state.email,
+        nomor: phone,
+        jumlah: amount,
+        fee: WITHDRAW_FEE,
+        diterimaAdmin: amount - WITHDRAW_FEE,
+        status: "menunggu",
+        dibuat: new Date().toLocaleString("id-ID")
+      });
+      saveState();
+      document.getElementById("jumlahTarik").value = "";
+      document.getElementById("noTujuan").value = "";
+      updateBalances();
+      renderWithdrawals();
+      renderAdminWithdrawals();
+      showToast("Permintaan penarikan berhasil dibuat.");
+    }
+
+    function renderWithdrawals() {
+      const box = document.getElementById("listWithdraw");
+      const items = state.daftarPenarikan.filter(item => item.email === state.email);
+      box.replaceChildren();
+      if (!items.length) {
+        box.innerHTML = '<div class="empty card"><div class="empty-icon">💳</div><p>Belum ada permintaan penarikan.</p></div>';
+        return;
+      }
+      items.forEach(item => {
+        const card = document.createElement("article");
+        card.className = "card withdraw-item";
+        const statusLabel = item.status === "diterima" ? "Pembayaran diterima" : item.status === "ditolak" ? "Ditolak, saldo dikembalikan" : "Menunggu admin";
+        const statusClass = item.status === "diterima" ? "done" : item.status === "ditolak" ? "rejected" : "waiting";
+        const fee = Number(item.fee ?? WITHDRAW_FEE);
+        const net = Number(item.diterimaAdmin ?? (item.jumlah - fee));
+        const displayAmount = item.status === "ditolak" ? item.jumlah : net;
+        const amountLabel = item.status === "ditolak" ? "Saldo dikembalikan" : "Diterima setelah fee";
+        card.innerHTML = `<div class="row"><strong>Rp ${rupiah(displayAmount)}</strong><span class="status ${statusClass}">${statusLabel}</span></div><div class="muted small" style="margin-top:8px">${amountLabel}<br>Fee: Rp ${rupiah(fee)}<br>Nomor DANA: ${escapeHtml(item.nomor)}<br>${escapeHtml(item.dibuat)}</div>`;
+        box.appendChild(card);
+      });
+    }
+
+    function renderAdminWithdrawals() {
+      const box = document.getElementById("permintaanTarik");
+      box.replaceChildren();
+      if (!state.daftarPenarikan.length) {
+        box.innerHTML = '<div class="muted small">Belum ada permohonan.</div>';
+        return;
+      }
+      state.daftarPenarikan.forEach(item => {
+        const card = document.createElement("article");
+        card.className = "card withdraw-item";
+        const fee = Number(item.fee ?? WITHDRAW_FEE);
+        const net = Number(item.diterimaAdmin ?? (item.jumlah - fee));
+        const pending = item.status === "menunggu";
+        const statusLabel = item.status === "diterima" ? "Diterima" : item.status === "ditolak" ? "Ditolak & dikembalikan" : "Menunggu";
+        const statusClass = item.status === "diterima" ? "done" : item.status === "ditolak" ? "rejected" : "waiting";
+        const actions = pending
+          ? `<div class="admin-actions"><button class="btn btn-success" type="button" onclick="prosesPenarikan(${item.id}, 'diterima')">✓ Konfirmasi diterima</button><button class="btn btn-reject" type="button" onclick="prosesPenarikan(${item.id}, 'ditolak')">✕ Tolak & kembalikan</button></div>`
+          : `<div class="muted tiny" style="margin-top:9px">Permintaan sudah diproses.</div>`;
+        card.innerHTML = `<div class="row"><strong>${escapeHtml(item.email)}</strong><span class="status ${statusClass}">${statusLabel}</span></div><div class="muted small" style="margin-top:7px">Diajukan: Rp ${rupiah(item.jumlah)} • Fee: Rp ${rupiah(fee)}<br>Masuk panel admin: <strong style="color:#f3f4f6">Rp ${rupiah(net)}</strong> • ${escapeHtml(item.nomor)}</div>${actions}`;
+        box.appendChild(card);
+      });
+    }
+
+    function prosesPenarikan(id, hasil) {
+      const item = state.daftarPenarikan.find(entry => entry.id === id);
+      if (!item || item.status !== "menunggu") return;
+      const fee = Number(item.fee ?? WITHDRAW_FEE);
+      item.fee = fee;
+      item.diterimaAdmin = Number(item.jumlah) - fee;
+      item.status = hasil;
+      if (hasil === "diterima") {
+        state.totalDitarik += Number(item.jumlah);
+        showToast("Pembayaran ditandai sudah diterima.");
+      } else {
+        state.saldo += Number(item.jumlah);
+        showToast("Penarikan ditolak. Saldo dikembalikan ke pengguna.");
+      }
+      saveState();
+      updateBalances();
+      renderWithdrawals();
+      renderAdminWithdrawals();
+    }
+
+    function muatPengaturanKeFormulir() {
+      document.getElementById("inputRateAdmin").value = state.hargaPerAkun;
+      document.getElementById("switchStatusLayanan").checked = state.layananBuka;
+      document.getElementById("inputRulesAdmin").value = (state.rules || DEFAULT_RULES).join("\n");
+    }
+
+    function simpanPengaturanAdmin() {
+      const rate = Number(document.getElementById("inputRateAdmin").value);
+      const rules = document.getElementById("inputRulesAdmin").value.split(/\r?\n/).map(item => item.trim()).filter(Boolean);
+      state.hargaPerAkun = Number.isFinite(rate) && rate > 0 ? Math.round(rate) : 500;
+      state.layananBuka = document.getElementById("switchStatusLayanan").checked;
+      state.rules = rules.length ? rules : [...DEFAULT_RULES];
+      saveState();
+      updateRate();
+      updateRulesList();
+      showToast("Pengaturan berhasil diterapkan.");
+    }
+
+    function loginUser() {
+      const email = document.getElementById("inputEmail").value.trim().toLowerCase();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast("Masukkan alamat email yang benar."); return; }
+      state.registeredEmails = Array.isArray(state.registeredEmails) ? state.registeredEmails : [];
+      state.bannedEmails = Array.isArray(state.bannedEmails) ? state.bannedEmails : [];
+      if (state.bannedEmails.includes(email)) {
+        showToast("Email ini dibanned dan tidak dapat masuk atau mengirim email.");
+        return;
+      }
+      if (state.registeredEmails.length && !state.registeredEmails.includes(email)) {
+        showToast("Email belum terdaftar di perangkat ini. Gunakan email yang pernah didaftarkan.");
+        return;
+      }
+      if (!state.registeredEmails.includes(email)) state.registeredEmails.push(email);
+      state.terhubung = true;
+      state.email = email;
+      state.namaPengguna = email.split("@")[0];
+      setUserLabels();
+      updateBalances();
+      renderHistory();
+      renderWithdrawals();
+      saveState();
+      showPage("pageBeranda");
+    }
+
+    function kembaliKeProfil() {
+      state.terhubung = false;
+      state.namaPengguna = "";
+      state.email = "";
+      showPage("pageHome");
+    }
+    function keluarDariSistem() {
+      state.terhubung = false;
+      state.namaPengguna = "";
+      state.email = "";
+      document.getElementById("inputEmail").value = "";
+      document.getElementById("daftarEmailInput").value = "";
+      document.getElementById("jumlahTarik").value = "";
+      document.getElementById("noTujuan").value = "";
+      saveState();
+      setUserLabels();
+      showPage("pageHome");
+      showToast("Sesi sudah ditutup.");
+    }
+
+    document.getElementById("logoUtama").addEventListener("click", () => {
+      const now = Date.now();
+      if (now - lastLogoClick > 800) logoClicks = 0;
+      lastLogoClick = now;
+      logoClicks += 1;
+      if (logoClicks >= 15) { logoClicks = 0; showAdminModal(); }
+    });
+    document.getElementById("pinAdmin").addEventListener("keydown", event => {
+      if (event.key === "Enter") bukaAdmin();
+    });
+    document.getElementById("noTujuan").addEventListener("input", updateBalances);
+    document.getElementById("jumlahTarik").addEventListener("input", updateBalances);
+    document.getElementById("adminModal").addEventListener("click", event => {
+      if (event.target.id === "adminModal") hideAdminModal();
+    });
+
+    document.getElementById("inputRulesAdmin").value = (state.rules || DEFAULT_RULES).join("\n");
+    const LOGO_DATA = "data:image/webp;base64,UklGRoYCAABXRUJQVlA4WAoAAAAQAAAAXwAAXwAAQUxQSDgAAAABP0CYbeQPt//RXDUiIoQd1ESyU+UnIFXqTExgAANowL+Rq+iI6P8ErA2/LvAMWj+I7z+nZQ38AFZQOCAoAgAAcBAAnQEqYABgAD6pUKBLpiUjIauU6LDAFQlkANalwL7OPn40Mres6dv4lnSg8wH2zdhT/q+oB/UOoe5+X2R/KABXQg35z2wErXwONOVnPyW/I/DfbGTHPvPmf6wkXFVFcwdaePPUeU8R8VV6E+xC9pBR6Ef7mrD2g4M3mSP7aCM+TV3BSPkO8Zg3w/AA/v2ZgAEJfITKWv2Uke7APnx/x3bIB0BJfwOvFIXU2qvKkskCZBFxm6QBAu5C9ktevT4y58qXrugkIXjvYqFbahr69p3v4gURGPU8UE6TO5Pnme1RYqcKCcEL/vR8zGechs5eVpfqQSumZEPpm61V+kmlAjiPwWbQaRTCSOd7uvxfUhpNvH6rnsXY+BEaZTHt8g5TbNnpeLMWKJQ8sMmGZMWmld5/eSpZRxTVIAiZ84zhmWJn1c/iFqTfCb8/kln7b1K3/8YwOGLlOLv6Navo3Ib2fBcCuhU/OjntBN98sM2tLJjBYgDLmc7JKkUojPm9R2rAhhZfaRwI/yxMhDqcR6nBs+C6z7x+Ezq9QDsnc+c79JCKLt31oLKPsmClxutRxXLnx5BqkaCfeFIPPmCTSLk9XcdUcafxsUFqdLbYrS4LgvwX6vGiegJmu1qWMTSde9qtRplxE4htMELFnQ5PhNsVPcShUU+tjQ2+gAowuC34XtBD/sGB631VQUo2ksQ++mL0lYmojC1rZtFVyGZAeqoxmdAaXgAAAAAA";
+    document.querySelectorAll('img[alt="Logo NEXORA"]').forEach(image => { image.src = LOGO_DATA; });
+    updateRate();
+    updateRulesList();
+    setUserLabels();
+    updateBalances();
+    showPage("pageHome");
+  </script>
+</body>
+</html>
